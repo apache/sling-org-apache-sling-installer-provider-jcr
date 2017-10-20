@@ -43,9 +43,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/sling/trunk/installer/providers/jcr</connection>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-provider-jcr.git</conncetion>
         <developerConnection> scm:svn:https://svn.apache.org/repos/asf/sling/trunk/installer/providers/jcr</developerConnection>
-        <url>http://svn.apache.org/viewvc/sling/trunk/installer/providers/jcr/</url>
+        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-installer-provider-jcr.git.git</url>
     </scm>
 
     <build>
