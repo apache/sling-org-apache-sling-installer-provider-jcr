@@ -18,8 +18,12 @@
  */
 package org.apache.sling.installer.provider.jcr.impl;
 
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import  org.apache.commons.lang3.ArrayUtils;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -72,5 +76,55 @@ public abstract class JcrUtil {
             return node.getNode(relativePath);
         }
         return parentNode.getNode(relativePath);
+    }
+
+    /**
+     *
+     * @param dict Dictionary with edited configs
+     * @return Dictionary with no primitive array, only object arrays
+     */
+    public static Dictionary<String, Object> replacePrimitiveArrays(Dictionary<String, Object> dict){
+        final Dictionary<String, Object> replacedConfigs = new Hashtable<>();
+        final Enumeration<String> e = dict.keys();
+        while(e.hasMoreElements()) {
+            final String key = e.nextElement();
+            final Object valueObj = dict.get(key);
+            if (valueObj != null && valueObj.getClass().isArray()) {
+                replacedConfigs.put(key, convertToObjectArray(valueObj));
+            } else {
+                replacedConfigs.put(key, valueObj);
+            }
+        }
+
+        return replacedConfigs;
+    }
+
+    /**
+     * Convert the object to an array
+     * @param value The array
+     * @return an object array
+     */
+    private static Object[] convertToObjectArray(final Object value) {
+        final Object[] values;
+        if (value instanceof long[]) {
+            values = ArrayUtils.toObject((long[])value);
+        } else if (value instanceof int[]) {
+            values = ArrayUtils.toObject((int[])value);
+        } else if (value instanceof double[]) {
+            values = ArrayUtils.toObject((double[])value);
+        } else if (value instanceof byte[]) {
+            values = ArrayUtils.toObject((byte[])value);
+        } else if (value instanceof float[]) {
+            values = ArrayUtils.toObject((float[])value);
+        } else if (value instanceof short[]) {
+            values = ArrayUtils.toObject((short[])value);
+        } else if (value instanceof boolean[]) {
+            values = ArrayUtils.toObject((boolean[])value);
+        } else if (value instanceof char[]) {
+            values = ArrayUtils.toObject((char[])value);
+        } else {
+            values = (Object[]) value;
+        }
+        return values;
     }
 }

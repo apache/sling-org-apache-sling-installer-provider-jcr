@@ -777,7 +777,7 @@ public class JcrInstaller implements UpdateHandler, ManagedService {
             // write to a byte array stream
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos.write("# Configuration created by Apache Sling JCR Installer\n".getBytes("UTF-8"));
-            ConfigurationHandler.write(baos, dict);
+            ConfigurationHandler.write(baos, JcrUtil.replacePrimitiveArrays(dict));
             baos.close();
 
             // get or create file node

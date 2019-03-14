@@ -67,6 +67,9 @@
                         <Import-Package>
                             javax.jcr.*;version=1.0,
                             org.apache.sling.installer.api;version="[3.1.2,4)",
+                            !org.apache.commons.lang3.builder,
+                            !org.apache.commons.lang3.math,
+                            !org.apache.commons.lang3.mutable,
                             *
                         </Import-Package>
                         <Private-Package>org.apache.sling.installer.provider.jcr.impl.*</Private-Package>
@@ -74,7 +77,8 @@
                         <Sling-Namespaces>sling=http://sling.apache.org/jcr/sling/1.0</Sling-Namespaces>
                         <Embed-Dependency>
                             org.apache.felix.configadmin;inline="org/apache/felix/cm/file/ConfigurationHandler.*",
-                            org.apache.sling.commons.osgi;inline="org/apache/sling/commons/osgi/PropertiesUtil.*"
+                            org.apache.sling.commons.osgi;inline="org/apache/sling/commons/osgi/PropertiesUtil.*",
+                            commons-lang3;inline="org/apache/commons/lang3/ArrayUtils.*"
                         </Embed-Dependency>
                     </instructions>
                 </configuration>
@@ -117,6 +121,12 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.commons.osgi</artifactId>
             <version>2.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
