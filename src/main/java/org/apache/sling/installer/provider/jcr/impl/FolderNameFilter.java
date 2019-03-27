@@ -128,7 +128,7 @@ class FolderNameFilter {
      * 	(according to our regexp and current RunMode), return the
      * 	priority to use for InstallableResource found in that folder.
      *
-     * 	@return -1 if path is not an installable folder, else resource priority
+     * 	@return -1 or 0 if path is not an installable folder, else resource priority
      */
     int getPriority(final String path) {
     	int result = 0;
