@@ -52,8 +52,6 @@ import org.apache.sling.installer.api.InstallableResource;
 import org.apache.sling.installer.api.OsgiInstaller;
 import org.apache.sling.installer.api.UpdateHandler;
 import org.apache.sling.installer.api.UpdateResult;
-import org.apache.sling.installer.api.serializer.ConfigurationSerializer;
-import org.apache.sling.installer.api.serializer.ConfigurationSerializerFactory;
 import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.serviceusermapping.ServiceUserMapped;
 import org.apache.sling.settings.SlingSettingsService;
@@ -777,9 +775,9 @@ public class JcrInstaller implements UpdateHandler, ManagedService {
             }
 
             // write to a byte array stream
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ConfigurationSerializer serializer = ConfigurationSerializerFactory.create(ConfigurationSerializerFactory.Format.JSON);
-            serializer.serialize(dict, baos);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write("# Configuration created by Apache Sling JCR Installer\n".getBytes("UTF-8"));
+            ConfigurationHandler.write(baos, dict);
             baos.close();
 
             // get or create file node
