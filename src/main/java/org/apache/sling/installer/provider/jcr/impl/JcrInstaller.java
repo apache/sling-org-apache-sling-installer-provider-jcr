@@ -105,6 +105,8 @@ public class JcrInstaller implements UpdateHandler, ManagedService {
     private static final String PROP_MIME = "jcr:mimeType";
     private static final String MIME_TXT = "text/plain";
     private static final String ENCODING = "UTF-8";
+    
+    private static final String CONFIG_FILE_EXTENSION = ".cfg.json";
 
     /** Default regexp for watched folders */
     public static final String DEFAULT_FOLDER_NAME_REGEXP = ".*/(install|config)$";
@@ -750,14 +752,14 @@ public class JcrInstaller implements UpdateHandler, ManagedService {
                     } else {
                         name = url.substring(lastSlash + 1, lastPos);
                     }
-                    nodePath = getPathWithHighestPrio(cfg, cfg.getNewConfigPath() + name + ".config");
+                    nodePath = getPathWithHighestPrio(cfg, cfg.getNewConfigPath() + name + CONFIG_FILE_EXTENSION);
                 }
                 // ensure extension 'config'
-                if ( !nodePath.endsWith(".config") ) {
+                if ( !nodePath.endsWith(CONFIG_FILE_EXTENSION) ) {
                     if ( session.itemExists(nodePath) ) {
                         session.getItem(nodePath).remove();
                     }
-                    path = nodePath + ".config";
+                    path = nodePath + CONFIG_FILE_EXTENSION;
                 } else {
                     path = nodePath;
                 }
@@ -772,7 +774,7 @@ public class JcrInstaller implements UpdateHandler, ManagedService {
                 } else {
                     name = id;
                 }
-                path = cfg.getNewConfigPath() + name + ".config";
+                path = cfg.getNewConfigPath() + name + CONFIG_FILE_EXTENSION;
                 logger.debug("Add of {} at {}", resourceType, path);
             }
 
