@@ -60,8 +60,12 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Main class of jcrinstall, runs as a service, observes the repository for changes in folders having names that match configurable regular
- * expressions, and registers resources found in those folders with the OSGi installer for installation. */
+/**
+ * Main class of jcrinstall, runs as a service, observes the
+ * repository for changes in folders having names that match
+ * configurable regular expressions, and registers resources
+ * found in those folders with the OSGi installer for installation.
+ */
 @Component(immediate = true, service = UpdateHandler.class, property = Constants.SERVICE_RANKING+":Integer=100")
 @Designate(ocd = JcrInstaller.Configuration.class)
 public class JcrInstaller implements UpdateHandler {
@@ -308,7 +312,9 @@ public class JcrInstaller implements UpdateHandler {
         backgroundThread.start();
     }
 
-    /** Deactivate this component */
+    /**
+     * Deactivate this component
+     */
     @Deactivate
     protected void deactivate() {
         logger.info("Deactivating Apache Sling JCR Installer");
@@ -325,7 +331,8 @@ public class JcrInstaller implements UpdateHandler {
         }
     }
 
-    /** Find the paths to watch under rootPath, according to our folderNameFilter, and add them to result */
+    /** Find the paths to watch under rootPath, according to our folderNameFilter,
+     *  and add them to result */
     private void findPathsToWatch(final InstallerConfig cfg, final Session session,
             final String rootPath) throws RepositoryException {
         Session s = null;
@@ -476,6 +483,7 @@ public class JcrInstaller implements UpdateHandler {
                             toRemove.toArray(new String[toRemove.size()]));
                 }
             }
+
 
         } catch (final Exception e) {
             logger.warn("Exception in runOneCycle()", e);
