@@ -69,7 +69,7 @@ public abstract class JcrInstallTestBase  {
         contentHelper.cleanupContent();
         eventHelper = null;
         contentHelper = null;
-        installer.deactivate(context.componentContext());
+        installer.deactivate();
         MiscUtil.waitForInstallerThread(installer, TIMEOUT);
     }
 

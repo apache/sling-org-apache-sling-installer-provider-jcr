@@ -81,7 +81,7 @@ public class ScanningLoopTest extends JcrInstallTestBase {
     public void testPauseScan() throws Exception{
         assertFalse(installer.scanningIsPaused(installer.getConfiguration(), installer.getSession()));
 
-        Node n = contentHelper.createFolder(JcrInstaller.PAUSE_SCAN_NODE_PATH);
+        Node n = contentHelper.createFolder("/system/sling/installer/jcr/pauseInstallation");
         Node testNode = n.addNode("foo.example.pause");
         session.save();
 

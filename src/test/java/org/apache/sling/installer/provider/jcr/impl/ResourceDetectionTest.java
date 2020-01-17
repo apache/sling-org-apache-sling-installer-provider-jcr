@@ -26,7 +26,6 @@ import javax.jcr.Node;
 
 import org.apache.sling.installer.provider.jcr.impl.JcrInstaller;
 import org.junit.Test;
-import org.osgi.service.component.ComponentContext;
 
 /** Test that added/updated/removed resources are
  * 	correctly translated to OsgiInstaller registration
@@ -100,16 +99,15 @@ public class ResourceDetectionTest extends JcrInstallTestBase {
         assertEquals("Expecting only remove calls when resources are deleted", 
         		2, osgiInstaller.getRecordedCalls().size());
     }
-    
+
     @Test
     public void testStopAndRestart() throws Exception {
         assertRegisteredPaths(contentHelper.FAKE_RESOURCES);
         assertRegisteredPaths(contentHelper.FAKE_CONFIGS);
-        final ComponentContext cc = context.componentContext();
         
         // With the installer deactivated, remove two resources and add some new ones 
         osgiInstaller.clearRecordedCalls();
-        installer.deactivate(cc);
+        installer.deactivate();
         assertEquals("Expected no calls to OsgiInstaller when deactivating JcrInstaller", 
         		0, osgiInstaller.getRecordedCalls().size());
         final int toRemove = 2;
@@ -131,7 +129,7 @@ public class ResourceDetectionTest extends JcrInstallTestBase {
         		0, osgiInstaller.getRecordedCalls().size());
         
         // Restart JcrInstaller and verify that all remaining resources are re-registered
-        installer.activate(cc);
+        context.registerInjectActivateService(installer);
         MiscUtil.waitAfterContentChanges(eventHelper, installer);
         
         for(int i=0; i < contentHelper.FAKE_RESOURCES.length; i++) {
@@ -153,7 +151,7 @@ public class ResourceDetectionTest extends JcrInstallTestBase {
         for(String path : toAdd) {
         	assertRecordedCall("register",path);
         }
-   }
+    }
     
     @Test
     public void testFolderRemoval() throws Exception {
