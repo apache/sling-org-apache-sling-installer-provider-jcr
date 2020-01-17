@@ -1,3 +1,2 @@
 Sling-Nodetypes: SLING-INF/nodetypes/osgiconfig.cn
 Sling-Namespaces: sling=http://sling.apache.org/jcr/sling/1.0
--conditionallpackage: org.apache.sling.commons.osgi.*
