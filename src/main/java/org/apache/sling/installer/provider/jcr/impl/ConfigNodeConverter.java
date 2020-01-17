@@ -95,7 +95,7 @@ class ConfigNodeConverter implements JcrInstaller.NodeConverter {
                 int i = 0;
                 for (Value v : values) {
                     Object o = convertValue(v);
-                    if (i == 0) {
+                    if (data == null) {
                         data = (Object[])Array.newInstance(o.getClass(), values.length);
                     }
                     data[i++] = o;
@@ -164,7 +164,7 @@ class ConfigNodeConverter implements JcrInstaller.NodeConverter {
             d.update(bos.toByteArray());
             return digestToString(d);
         } catch (Exception ignore) {
-            return data.toString();
+            return (data != null ? data.toString() : null);
         }
     }
 }

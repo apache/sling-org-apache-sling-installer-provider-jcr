@@ -30,7 +30,7 @@ import org.junit.Test;
 public class FolderNameFilterTest {
     public static final String DEFAULT_REGEXP =  ".*/install$";
     public static final String CONFIG_REGEXP =  ".*/config$";
-    public static final String [] ROOTS = JcrInstaller.DEFAULT_SEARCH_PATH;
+    public static final String [] ROOTS = { "/libs:100", "/apps:200" };
 
     @Test
     public void testParseRootPaths() {
