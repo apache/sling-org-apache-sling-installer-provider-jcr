@@ -586,6 +586,17 @@ public class JcrInstaller implements UpdateHandler {
     }
 
     /**
+     * @see org.apache.sling.installer.api.UpdateHandler#handleUpdate(java.lang.String, java.lang.String, java.lang.String, java.util.Dictionary, Map)
+     */
+    public UpdateResult handleUpdate(final String resourceType,
+            final String id,
+            final String url,
+            final Dictionary<String, Object> dict,
+            final Map<String, Object> attributes) {
+        return this.handleUpdate(resourceType, id, url, null, dict, attributes);
+    }
+
+    /**
      * @see org.apache.sling.installer.api.UpdateHandler#handleUpdate(java.lang.String, java.lang.String, java.lang.String, java.io.InputStream, Map)
      */
     public UpdateResult handleUpdate(final String resourceType,
