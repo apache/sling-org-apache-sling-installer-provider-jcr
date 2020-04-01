@@ -1,2 +1,2 @@
-Sling-Nodetypes: SLING-INF/nodetypes/osgiconfig.cn
+Sling-Nodetypes: SLING-INF/nodetypes/osgiconfig.cnd
 Sling-Namespaces: sling=http://sling.apache.org/jcr/sling/1.0
