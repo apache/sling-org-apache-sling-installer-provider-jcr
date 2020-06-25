@@ -26,7 +26,7 @@ import org.apache.sling.commons.testing.jcr.EventHelper;
 class MiscUtil {
 
     public static String SEARCH_PATHS [] = { "/libs/", "/apps/" };
-    public static String RUN_MODES [] = { "dev", "staging" };
+    public static String RUN_MODES = "dev,staging";
 
     static private void waitForCycles(JcrInstaller installer, long initialCycleCount, int expectedCycles, long timeoutMsec) throws Exception {
         final long endTime = System.currentTimeMillis() + timeoutMsec;
