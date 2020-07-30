@@ -21,15 +21,20 @@ package org.apache.sling.installer.provider.jcr.impl;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+
 import javax.jcr.Session;
 
 import org.apache.sling.commons.testing.jcr.EventHelper;
 import org.apache.sling.installer.api.OsgiInstaller;
+import org.apache.sling.settings.SlingSettingsService;
+import org.apache.sling.settings.impl.SlingSettingsServiceImpl;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.junit.SlingContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
+import org.osgi.framework.Constants;
 
 /** Base test class with common utilities */
 public abstract class JcrInstallTestBase  {
@@ -43,6 +48,7 @@ public abstract class JcrInstallTestBase  {
     protected ContentHelper contentHelper;
     protected JcrInstaller installer;
     protected MockOsgiInstaller osgiInstaller;
+    protected SlingSettingsServiceImpl slingSettings;
 
     @Before
     public void setUp() throws Exception {
@@ -56,8 +62,9 @@ public abstract class JcrInstallTestBase  {
         }
         osgiInstaller = new MockOsgiInstaller();
         context.registerService(OsgiInstaller.class, osgiInstaller);
-        context.runMode(MiscUtil.RUN_MODES);
-        
+        // use custom slingSettings (sling Mocks does not yet support newest version)
+        slingSettings = new SlingSettingsServiceImpl(MiscUtil.RUN_MODES);
+        context.registerService(SlingSettingsService.class, slingSettings, Collections.singletonMap(Constants.SERVICE_RANKING, 1000));
         installer = new JcrInstaller();
         context.registerInjectActivateService(installer);
         Thread.sleep(1000);

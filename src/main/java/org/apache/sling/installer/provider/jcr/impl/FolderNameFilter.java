@@ -21,12 +21,11 @@ package org.apache.sling.installer.provider.jcr.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.sling.settings.SlingSettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 class FolderNameFilter {
     private final Pattern pattern;
     private final String regexp;
-    private final Set<String> runModes;
+    private final SlingSettingsService slingSettings;
     private final String [] rootPaths;
     private final Map<String, Integer> rootPriorities = new HashMap<String, Integer>();
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -52,11 +51,11 @@ class FolderNameFilter {
     public static final int RUNMODE_PRIORITY_BOOST = 1;
     public static final int DEFAULT_ROOT_PRIORITY = 99;
 
-    FolderNameFilter(final String [] rootsConfig, final String regexp, final Set<String> runModes) {
+    FolderNameFilter(final String [] rootsConfig, final String regexp, final SlingSettingsService slingSettings) {
         final List<RootPathInfo> rootPathInfos = new ArrayList<RootPathInfo>();
         this.regexp = regexp;
         this.pattern = Pattern.compile(regexp);
-        this.runModes = runModes;
+        this.slingSettings = slingSettings;
 
         // Each entry in rootsConfig is like /libs:100, where 100
         // is the priority.
@@ -132,7 +131,6 @@ class FolderNameFilter {
      */
     int getPriority(final String path) {
     	int result = 0;
-    	List<String> modes = null;
     	boolean match = false;
 
         // If path contains dots after the last /, remove suffixes
@@ -146,11 +144,11 @@ class FolderNameFilter {
         if(lastSlash > 0) {
         	prefix = prefix.substring(lastSlash);
         }
-        if(prefix.indexOf(DOT) > 0) {
+        String modes = null;
+        if (prefix.indexOf(DOT) > 0) {
             int pos = 0;
-            modes = new LinkedList<String>();
+            String pathAndRunmodes = prefix;
             while( (pos = prefix.lastIndexOf(DOT)) >= 0) {
-                modes.add(prefix.substring(pos + 1));
                 prefix = prefix.substring(0, pos);
                 if(pattern.matcher(prefix).matches()) {
                     result = getRootPriority(path);
@@ -160,13 +158,12 @@ class FolderNameFilter {
 
             // If path prefix matches, check that all our runmodes match
             if(result > 0) {
-                for(String m : modes) {
-                    if(runModes.contains(m)) {
-                    	result += RUNMODE_PRIORITY_BOOST;
-                    } else {
-                        result = 0;
-                        break;
-                    }
+                modes = pathAndRunmodes.substring(pos+1);
+                int runModeMatchCount = slingSettings.getBestRunModeMatchCountFromSpec(modes);
+                if (runModeMatchCount > 0) {
+                    result += RUNMODE_PRIORITY_BOOST * runModeMatchCount;
+                } else {
+                    result = 0;
                 }
             }
 
@@ -189,7 +186,7 @@ class FolderNameFilter {
     }
 
     public String toString() {
-        return getClass().getSimpleName() + " (" + regexp + "), RunModes=" + runModes;
+        return getClass().getSimpleName() + " (" + regexp + "), active run modes=" + slingSettings.getRunModes();
     }
 
     int getRootPriority(String path) {

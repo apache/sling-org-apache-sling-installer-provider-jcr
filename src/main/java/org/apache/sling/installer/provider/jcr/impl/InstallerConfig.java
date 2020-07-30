@@ -78,7 +78,7 @@ public class InstallerConfig {
        
         // Setup folder filtering and watching
         this.folderNameFilter = new FolderNameFilter(configuration.sling_jcrinstall_search_path(),
-                folderNameRegexp, settings.getRunModes());
+                folderNameRegexp, settings);
         this.roots = folderNameFilter.getRootPaths();
 
         // setup default path for new configurations
