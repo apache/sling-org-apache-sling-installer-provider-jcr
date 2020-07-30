@@ -1,2 +1,3 @@
+Bundle-DocURL: https://sling.apache.org/documentation/bundles/jcr-installer-provider.html
 Sling-Nodetypes: SLING-INF/nodetypes/osgiconfig.cnd
 Sling-Namespaces: sling=http://sling.apache.org/jcr/sling/1.0
