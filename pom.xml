@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>org.apache.sling.installer.provider.jcr</artifactId>
-    <version>3.2.3-SNAPSHOT</version>
+    <version>3.3.0</version>
 
     <name>Apache Sling JCR Installer</name>
     <description> 
@@ -38,14 +38,14 @@
     <properties>
         <jackrabbit.version>2.10.0</jackrabbit.version>
         <sling.java.version>8</sling.java.version>
-        <project.build.outputTimestamp>2020-04-02T11:57:17Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2020-07-30T09:11:32Z</project.build.outputTimestamp>
     </properties>
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-provider-jcr.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-provider-jcr.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-installer-provider-jcr.git</url>
-      <tag>HEAD</tag>
+      <tag>org.apache.sling.installer.provider.jcr-3.3.0</tag>
   </scm>
 
     <dependencies>
