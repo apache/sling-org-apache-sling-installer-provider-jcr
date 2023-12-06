@@ -36,7 +36,7 @@
     </description>
     
     <properties>
-        <jackrabbit.version>2.10.0</jackrabbit.version>
+        <jackrabbit.version>2.10.1</jackrabbit.version>
         <sling.java.version>8</sling.java.version>
         <project.build.outputTimestamp>2020-07-30T09:13:45Z</project.build.outputTimestamp>
     </properties>
