@@ -50,6 +50,7 @@ import org.apache.sling.jcr.api.SlingRepository;
 import org.apache.sling.serviceusermapping.ServiceUserMapped;
 import org.apache.sling.settings.SlingSettingsService;
 import org.osgi.framework.Constants;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -90,6 +91,7 @@ public class JcrInstaller implements UpdateHandler {
     private static final String PROP_MIME = "jcr:mimeType";
     private static final String MIME_TXT = "text/plain";
     private static final String ENCODING = "UTF-8";
+    private static final String ORIGINAL_PID = "original.pid";
 
     private static final String CONFIG_FILE_EXTENSION = ".cfg.json";
 
@@ -681,8 +683,15 @@ public class JcrInstaller implements UpdateHandler {
             } else {
                 // add
                 final String name;
-                if (attributes != null && attributes.get(InstallableResource.RESOURCE_URI_HINT) != null) {
+                if (attributes != null && attributes.get(ConfigurationAdmin.SERVICE_FACTORYPID) != null
+                        && attributes.get(Constants.SERVICE_PID) != null
+                        && !((String) attributes.get(Constants.SERVICE_PID)).startsWith(((String) attributes.get(ConfigurationAdmin.SERVICE_FACTORYPID)) + '~')) {
+                    String factoryPid = (String) attributes.get(ConfigurationAdmin.SERVICE_FACTORYPID);
+                    String pid = (String) attributes.get(Constants.SERVICE_PID);
+                    name = JcrUtil.getPid(factoryPid, pid);
+                } else if (attributes != null && attributes.get(InstallableResource.RESOURCE_URI_HINT) != null) {
                     name = (String) attributes.get(InstallableResource.RESOURCE_URI_HINT);
+
                 } else {
                     name = id;
                 }
@@ -707,6 +716,10 @@ public class JcrInstaller implements UpdateHandler {
             dataNode.setProperty(PROP_MODIFIED, Calendar.getInstance());
             dataNode.setProperty(PROP_ENC, ENCODING);
             dataNode.setProperty(PROP_MIME, MIME_TXT);
+            dataNode.setProperty(ORIGINAL_PID, id);
+            if (attributes != null && attributes.get(ConfigurationAdmin.SERVICE_FACTORYPID) != null) {
+                dataNode.setProperty(ConfigurationAdmin.SERVICE_FACTORYPID, (String) attributes.get(ConfigurationAdmin.SERVICE_FACTORYPID));
+            }
             session.save();
 
             final UpdateResult result = new UpdateResult(JcrInstaller.URL_SCHEME + ':' + path);

@@ -18,6 +18,8 @@
  */
 package org.apache.sling.installer.provider.jcr.impl;
 
+import org.osgi.service.cm.ConfigurationEvent;
+
 import java.util.StringTokenizer;
 
 import javax.jcr.Node;
@@ -72,5 +74,22 @@ public abstract class JcrUtil {
             return node.getNode(relativePath);
         }
         return parentNode.getNode(relativePath);
+    }
+
+    /**
+     * Get the PID for a configuration event by using the R7 format before saving it.
+     *
+     * @param factoryPid factory PID of the configuration
+     * @param pid PID of the configuration
+     * @return The PID in R7 format
+     */
+    public static String getPid(final String factoryPid, final String pid) {
+        // if factory pid is separated from pid by a period (.), we need replace it with a ~ so that this can be installed
+        // and grouped as a factory configuration
+        if (pid.startsWith(factoryPid + '.')) {
+            String id = pid.substring(factoryPid.length() + 1);
+            return factoryPid + "~" + id;
+        }
+        return pid;
     }
 }
