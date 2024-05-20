@@ -717,9 +717,6 @@ public class JcrInstaller implements UpdateHandler {
             dataNode.setProperty(PROP_ENC, ENCODING);
             dataNode.setProperty(PROP_MIME, MIME_TXT);
             dataNode.setProperty(ORIGINAL_PID, id);
-            if (attributes != null && attributes.get(ConfigurationAdmin.SERVICE_FACTORYPID) != null) {
-                dataNode.setProperty(ConfigurationAdmin.SERVICE_FACTORYPID, (String) attributes.get(ConfigurationAdmin.SERVICE_FACTORYPID));
-            }
             session.save();
 
             final UpdateResult result = new UpdateResult(JcrInstaller.URL_SCHEME + ':' + path);
