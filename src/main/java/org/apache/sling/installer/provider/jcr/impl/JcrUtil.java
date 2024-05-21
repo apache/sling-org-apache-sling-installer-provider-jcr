@@ -86,6 +86,12 @@ public abstract class JcrUtil {
     public static String getPid(final String factoryPid, final String pid) {
         // if factory pid is separated from pid by a period (.), we need replace it with a ~ so that this can be installed
         // and grouped as a factory configuration
+
+        if (pid.startsWith(factoryPid + '~')) {
+            // pid is already in correct format
+            return pid;
+        }
+
         if (pid.startsWith(factoryPid + '.')) {
             String id = pid.substring(factoryPid.length() + 1);
             return factoryPid + "~" + id;
