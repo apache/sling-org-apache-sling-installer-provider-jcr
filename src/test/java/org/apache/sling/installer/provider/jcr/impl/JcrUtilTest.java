@@ -19,6 +19,12 @@ public class JcrUtilTest {
     }
 
     @Test
+    public void testGetPidWhenPidIsDifferentFromFactoryPid2() {
+        String pid = JcrUtil.getPid("aa.b.c", "a.b.c");
+        assertEquals("aa.b.c~a.b.c", pid);
+    }
+
+    @Test
     public void testGetPidWhenPidIsInExpectedFormat() {
         String pid = JcrUtil.getPid("a.b.c", "a.b.c~c1");
         assertEquals("a.b.c~c1", pid);
