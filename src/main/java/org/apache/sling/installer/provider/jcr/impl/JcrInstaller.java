@@ -91,7 +91,6 @@ public class JcrInstaller implements UpdateHandler {
     private static final String PROP_MIME = "jcr:mimeType";
     private static final String MIME_TXT = "text/plain";
     private static final String ENCODING = "UTF-8";
-    private static final String ORIGINAL_PID = "original.pid";
 
     private static final String CONFIG_FILE_EXTENSION = ".cfg.json";
 
@@ -716,7 +715,6 @@ public class JcrInstaller implements UpdateHandler {
             dataNode.setProperty(PROP_MODIFIED, Calendar.getInstance());
             dataNode.setProperty(PROP_ENC, ENCODING);
             dataNode.setProperty(PROP_MIME, MIME_TXT);
-            dataNode.setProperty(ORIGINAL_PID, id);
             session.save();
 
             final UpdateResult result = new UpdateResult(JcrInstaller.URL_SCHEME + ':' + path);
