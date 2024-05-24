@@ -690,7 +690,6 @@ public class JcrInstaller implements UpdateHandler {
                     name = JcrUtil.getPid(factoryPid, pid);
                 } else if (attributes != null && attributes.get(InstallableResource.RESOURCE_URI_HINT) != null) {
                     name = (String) attributes.get(InstallableResource.RESOURCE_URI_HINT);
-
                 } else {
                     name = id;
                 }
