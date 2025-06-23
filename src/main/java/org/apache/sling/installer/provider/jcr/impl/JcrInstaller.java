@@ -671,7 +671,13 @@ public class JcrInstaller implements UpdateHandler {
                     if (session.itemExists(nodePath)) {
                         session.getItem(nodePath).remove();
                     }
-                    path = nodePath + CONFIG_FILE_EXTENSION;
+                    final int lastDot = nodePath.lastIndexOf('.');
+                    final int lastSlash = nodePath.lastIndexOf('/');
+                    if ( lastDot <= lastSlash ) {
+                        path = oldPath + CONFIG_FILE_EXTENSION;
+                    } else {
+                        path = oldPath.substring(0, lastDot) + CONFIG_FILE_EXTENSION;
+                    }
                 } else {
                     path = nodePath;
                 }
