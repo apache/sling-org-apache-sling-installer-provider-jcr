@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Dictionary;
 import java.util.LinkedList;
@@ -92,6 +93,9 @@ public class JcrInstaller implements UpdateHandler {
     private static final String ENCODING = "UTF-8";
 
     private static final String CONFIG_FILE_EXTENSION = ".cfg.json";
+
+    /** Configuration file extensions supported by the OSGi installer, see InternalResource in installer core. */
+    private static final List<String> SUPPORTED_CONFIG_FILE_EXTENSIONS = Arrays.asList(".config", ".properties", ".cfg");
 
     @ObjectClassDefinition(id = "org.apache.sling.installer.provider.jcr.impl.JcrInstaller", name = "Apache Sling JCR Installer", description = "Installs OSGi bundles and configurations found in the JCR Repository.")
     static @interface Configuration {
@@ -607,6 +611,20 @@ public class JcrInstaller implements UpdateHandler {
         return this.handleUpdate(resourceType, id, url, is, null, attributes);
     }
 
+    /**
+     * Removes a supported configuration file extension from the path. Paths without such an
+     * extension (e.g. nodes of type sling:OsgiConfig named after the PID) are returned as is,
+     * as the PID itself might contain dots.
+     */
+    private static String removeConfigFileExtension(final String path) {
+        for (final String extension : SUPPORTED_CONFIG_FILE_EXTENSIONS) {
+            if (path.endsWith(extension)) {
+                return path.substring(0, path.length() - extension.length());
+            }
+        }
+        return path;
+    }
+
     private String getPathWithHighestPrio(final InstallerConfig cfg, final String oldPath) {
         final String path;
         // check root path, we use the path with highest prio
@@ -671,13 +689,7 @@ public class JcrInstaller implements UpdateHandler {
                     if (session.itemExists(nodePath)) {
                         session.getItem(nodePath).remove();
                     }
-                    final int lastDot = nodePath.lastIndexOf('.');
-                    final int lastSlash = nodePath.lastIndexOf('/');
-                    if ( lastDot <= lastSlash ) {
-                        path = oldPath + CONFIG_FILE_EXTENSION;
-                    } else {
-                        path = oldPath.substring(0, lastDot) + CONFIG_FILE_EXTENSION;
-                    }
+                    path = removeConfigFileExtension(oldPath) + CONFIG_FILE_EXTENSION;
                 } else {
                     path = nodePath;
                 }

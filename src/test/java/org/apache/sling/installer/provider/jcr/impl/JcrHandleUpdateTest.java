@@ -50,13 +50,13 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
     /**
      * Tests URL transformation for various configuration file extensions.
      * 
-     * Verifies that different file extensions (.config, .properties, .cfg, .xml, .json)
-     * are properly converted to the standardized .cfg.json format.
+     * Verifies that the configuration file extensions supported by the installer
+     * (.config, .properties, .cfg) are properly converted to the standardized .cfg.json format.
      */
     @Test
     public void testTransformConfigurationFileExtensionsToStandardizedFormat() throws Exception {
         // Given: Various configuration file extensions
-        String[] fileExtensions = {".config", ".properties", ".cfg", ".xml", ".json"};
+        String[] fileExtensions = {".config", ".properties", ".cfg"};
         
         for (String extension : fileExtensions) {
             // When: Handling update with different file extension
@@ -217,6 +217,61 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
             String expectedUrl = JCR_INSTALL_SCHEME + rootPath + "/" + TEST_CONFIG_NAME + EXPECTED_JSON_EXTENSION;
             assertEquals("Root path should be preserved: " + rootPath, 
                         expectedUrl, updateResult.getURL());
+        }
+    }
+
+    /**
+     * Tests that a configuration node named after the PID without any extension
+     * (e.g. a node of type sling:OsgiConfig) keeps its full PID on write back.
+     */
+    @Test
+    public void testKeepPidOfConfigurationWithoutExtension() throws Exception {
+        String[] pids = {
+            "org.apache.sling.engine.impl.SlingMainServlet",
+            "org.apache.sling.commons.log.LogManager.factory.config~myapp",
+            "org.apache.sling.commons.log.LogManager.factory.config-myapp"
+        };
+
+        for (String pid : pids) {
+            String originalUrl = JCR_INSTALL_SCHEME + APPS_BASE_PATH + "/config/" + pid;
+            UpdateResult updateResult = installer.handleUpdate(
+                CONFIG_RESOURCE_TYPE,
+                pid,
+                originalUrl,
+                new Hashtable<>(),
+                null
+            );
+
+            assertEquals("PID should be kept for: " + pid,
+                    JCR_INSTALL_SCHEME + APPS_BASE_PATH + "/config/" + pid + EXPECTED_JSON_EXTENSION,
+                    updateResult.getURL());
+        }
+    }
+
+    /**
+     * Tests that suffixes which are not configuration file extensions supported by
+     * the installer are treated as part of the PID and kept on write back.
+     */
+    @Test
+    public void testKeepSuffixWhichIsNotAConfigurationExtension() throws Exception {
+        String[] names = {
+            "org.apache.sling.commons.log.LogManager.factory.config~default.json",
+            "org.apache.sling.engine.impl.SlingMainServlet.xml"
+        };
+
+        for (String name : names) {
+            String originalUrl = JCR_INSTALL_SCHEME + APPS_BASE_PATH + "/config/" + name;
+            UpdateResult updateResult = installer.handleUpdate(
+                CONFIG_RESOURCE_TYPE,
+                name,
+                originalUrl,
+                new Hashtable<>(),
+                null
+            );
+
+            assertEquals("Suffix should be kept for: " + name,
+                    JCR_INSTALL_SCHEME + APPS_BASE_PATH + "/config/" + name + EXPECTED_JSON_EXTENSION,
+                    updateResult.getURL());
         }
     }
 
