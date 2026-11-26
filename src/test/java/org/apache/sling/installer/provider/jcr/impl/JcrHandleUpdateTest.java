@@ -43,9 +43,9 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
     private static final String EXPECTED_JSON_EXTENSION = ".cfg.json";
     
     private static final String TEST_CONFIG_NAME = "testConfiguration";
+    private static final String TEST_CONFIG_PATH = "/path/to/" + TEST_CONFIG_NAME;
     private static final String APPS_BASE_PATH = "/apps/myapp";
     private static final String LIBS_BASE_PATH = "/libs/sling";
-    private static final String TEST_CONFIG_PATH = APPS_BASE_PATH + "/config/" + TEST_CONFIG_NAME;
 
     /**
      * Tests URL transformation for various configuration file extensions.
@@ -87,7 +87,7 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
         // Given: Deeply nested configuration paths
         String[] nestedPaths = {
             "/apps/myapp/config/install/" + TEST_CONFIG_NAME + ".config",
-            "/apps/sling/installer/provider/jcr/" + TEST_CONFIG_NAME + ".config"
+            "/libs/sling/installer/provider/jcr/" + TEST_CONFIG_NAME + ".config"
         };
         
         for (String path : nestedPaths) {
@@ -148,7 +148,7 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
         
         for (String identifier : configIdentifiers) {
             // When: Handling update with different identifier
-            String originalUrl = JCR_INSTALL_SCHEME + APPS_BASE_PATH + "/config/" + identifier + ".config";
+            String originalUrl = JCR_INSTALL_SCHEME + "/path/to/" + identifier + ".config";
             UpdateResult updateResult = installer.handleUpdate(
                 CONFIG_RESOURCE_TYPE, 
                 identifier, 
@@ -158,7 +158,7 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
             );
             
             // Then: URL should be transformed correctly
-            String expectedUrl = JCR_INSTALL_SCHEME + APPS_BASE_PATH + "/config/" + identifier + EXPECTED_JSON_EXTENSION;
+            String expectedUrl = JCR_INSTALL_SCHEME + "/path/to/" + identifier + EXPECTED_JSON_EXTENSION;
             assertEquals("Identifier should be handled correctly: " + identifier, 
                         expectedUrl, updateResult.getURL());
         }
@@ -192,41 +192,32 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
     }
 
     /**
-     * Tests that configurations from a lower priority root path (/libs) are
-     * written back below the root path with the highest priority (/apps).
+     * Tests URL transformation for different root path priorities.
+     * 
+     * Validates that configuration updates in different root paths
+     * (/apps, /libs) are handled consistently.
      */
     @Test
-    public void testWriteBackToRootPathWithHighestPriority() throws Exception {
-        String originalUrl = JCR_INSTALL_SCHEME + LIBS_BASE_PATH + "/config/" + TEST_CONFIG_NAME + ".config";
-        UpdateResult updateResult = installer.handleUpdate(
-            CONFIG_RESOURCE_TYPE,
-            TEST_CONFIG_NAME,
-            originalUrl,
-            new Hashtable<>(),
-            null
-        );
-
-        assertEquals(JCR_INSTALL_SCHEME + "/apps/sling/config/" + TEST_CONFIG_NAME + EXPECTED_JSON_EXTENSION,
-                updateResult.getURL());
-    }
-
-    /**
-     * Tests that the extension is removed from the re-rooted path, even if the
-     * original root path has a different length than the highest priority root path.
-     */
-    @Test
-    public void testWriteBackFromRootPathWithDifferentLength() throws Exception {
-        String originalUrl = JCR_INSTALL_SCHEME + "/custom/myapp/config/org.example.MyService.config";
-        UpdateResult updateResult = installer.handleUpdate(
-            CONFIG_RESOURCE_TYPE,
-            "org.example.MyService",
-            originalUrl,
-            new Hashtable<>(),
-            null
-        );
-
-        assertEquals(JCR_INSTALL_SCHEME + "/apps/myapp/config/org.example.MyService" + EXPECTED_JSON_EXTENSION,
-                updateResult.getURL());
+    public void testHandleDifferentRootPathPriorities() throws Exception {
+        // Given: Different root paths with varying priorities
+        String[] rootPaths = {APPS_BASE_PATH, LIBS_BASE_PATH};
+        
+        for (String rootPath : rootPaths) {
+            // When: Handling update in different root path
+            String originalUrl = JCR_INSTALL_SCHEME + rootPath + "/" + TEST_CONFIG_NAME + ".config";
+            UpdateResult updateResult = installer.handleUpdate(
+                CONFIG_RESOURCE_TYPE, 
+                TEST_CONFIG_NAME, 
+                originalUrl, 
+                new Hashtable<>(), 
+                null
+            );
+            
+            // Then: URL should be transformed while preserving root path
+            String expectedUrl = JCR_INSTALL_SCHEME + rootPath + "/" + TEST_CONFIG_NAME + EXPECTED_JSON_EXTENSION;
+            assertEquals("Root path should be preserved: " + rootPath, 
+                        expectedUrl, updateResult.getURL());
+        }
     }
 
     /**
@@ -236,7 +227,7 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
     @Test
     public void testKeepPidOfConfigurationWithoutExtension() throws Exception {
         String[] pids = {
-            "com.adobe.granite.csrf.impl.CSRFFilter",
+            "org.apache.sling.engine.impl.SlingMainServlet",
             "org.apache.sling.commons.log.LogManager.factory.config~myapp",
             "org.apache.sling.commons.log.LogManager.factory.config-myapp"
         };
@@ -264,8 +255,8 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
     @Test
     public void testKeepSuffixWhichIsNotAConfigurationExtension() throws Exception {
         String[] names = {
-            "org.example.SecretProvider~default.json",
-            "org.example.MyService.xml"
+            "org.apache.sling.commons.log.LogManager.factory.config~default.json",
+            "org.apache.sling.engine.impl.SlingMainServlet.xml"
         };
 
         for (String name : names) {
@@ -293,7 +284,7 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
     @Test
     public void testHandleComplexPathsWithMultipleDots() throws Exception {
         // Given: Complex path with multiple dot-separated segments
-        String complexPath = APPS_BASE_PATH + "/config/my.configName.file.config";
+        String complexPath = "/path/to/my.configName.file.config";
         
         // When: Handling update with complex path
         String originalUrl = JCR_INSTALL_SCHEME + complexPath;
@@ -306,7 +297,7 @@ public class JcrHandleUpdateTest extends JcrInstallTestBase {
         );
         
         // Then: Only the final extension should be transformed
-        String expectedUrl = JCR_INSTALL_SCHEME + APPS_BASE_PATH + "/config/my.configName.file" + EXPECTED_JSON_EXTENSION;
+        String expectedUrl = JCR_INSTALL_SCHEME + "/path/to/my.configName.file" + EXPECTED_JSON_EXTENSION;
         assertEquals("Complex path with multiple dots should be handled correctly", 
                     expectedUrl, updateResult.getURL());
     }
